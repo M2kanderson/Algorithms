@@ -50,13 +50,11 @@ The roots are compared in constant time to determine connection.
 
 **running time as a function of N and T:**
 
-~ 3.71E-9 * N ^ 4.24
-~ 0.64 * T ^ 1.06
+* ~ 3.71E-9 * N ^ 4.24
+* ~ 0.64 * T ^ 1.06
 
 
-/******************************************************************************
- *  Performance with WeightedQuickUnionUF.java.
- *****************************************************************************/
+##  Performance with WeightedQuickUnionUF.java.
 
 (keep T constant)
 
@@ -83,11 +81,11 @@ The roots are compared in constant time to determine connection.
 
 **running time as a function of N and T:**  
 
-~ 3.98E-7 * N^2.56  
-~ 1.11E-3 * T^0.93
+* ~ 3.98E-7 * N^2.56  
+* ~ 1.11E-3 * T^0.93
 
 
- ##  Known bugs / limitations.
+##  Known bugs / limitations.
 
 
 This program has a backwash bug. All open sites that are connected to
