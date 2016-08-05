@@ -6,7 +6,7 @@ The program is implemented using the Java language and a Weighted Quick Union Al
 
 **Operating System:** OSX 10.10.5
 
-**Compiler:** Dr.Java
+**Compiler:** DrJava
 
 **Text editor / IDE:** DrJava
 
