@@ -1,4 +1,4 @@
 # Algorithms
 Algorithm Assignments from Robert Sedgewick's Algorithms class
 * [Percolation][percolation]
-[percolation]: percolation/
+[percolation]: Percolation/
