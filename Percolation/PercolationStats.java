@@ -16,7 +16,6 @@
 import edu.princeton.cs.algs4.StdRandom;
 
 public class PercolationStats {
-   private Percolation grid;
    private int openCount;
    private int[] counts;
    private int experiments;
@@ -26,20 +25,20 @@ public class PercolationStats {
    
    public PercolationStats(int N, int T)   // perform T independent experiments on an N-by-N grid
    {
-       if(N < 0 || T < 0)
+       if (N <= 0 || T <= 0)
            throw new java.lang.IllegalArgumentException();
        int index = 0;
        this.experiments = T;
        this.size = N;
        this.counts = new int[T];
-       while(index < T) {
+       while (index < T) {
            this.openCount = 0;
-           this.grid = new Percolation(N);
-           while(!this.grid.percolates()) {
-             int i = (int) StdRandom.uniform(N);
-             int j = (int) StdRandom.uniform(N);
-             if(!this.grid.isOpen(i, j)) {
-                 this.grid.open(i, j);
+           Percolation grid = new Percolation(N);
+           while (!grid.percolates()) {
+             int i = StdRandom.uniform(N) + 1;
+             int j = StdRandom.uniform(N) + 1;
+             if (!grid.isOpen(i, j)) {
+                 grid.open(i, j);
                  this.openCount++;
              }  
            }
@@ -49,10 +48,10 @@ public class PercolationStats {
    }
    public double mean()                    // sample mean of percolation threshold
    {
-       if(this.mean == -1)
+       if (this.mean == -1)
        {
            double sum = 0;
-           for(int i = 0; i < this.experiments; i++)
+           for (int i = 0; i < this.experiments; i++)
            {
                sum += this.counts[i] / (1.0 * this.size * this.size);
            }
@@ -62,10 +61,10 @@ public class PercolationStats {
    }
    public double stddev()                  // sample standard deviation of percolation threshold
    {
-       if(this.stddev == -1)
+       if (this.stddev == -1)
        {
            double diffSum = 0;
-           for(int i = 0; i < this.experiments; i++)
+           for (int i = 0; i < this.experiments; i++)
            {
                diffSum += Math.pow(this.counts[i] / (1.0 * this.size * this.size) - mean(), 2);
            }
@@ -74,12 +73,20 @@ public class PercolationStats {
        
        return this.stddev;
    }
-   public double confidenceLow()           // low  endpoint of 95% confidence interval
+   public double confidenceLo()           // low  endpoint of 95% confidence interval
    {
-       return mean() - 1.96*stddev()/this.experiments;
+       return mean() - 1.96*stddev()/Math.sqrt(this.experiments);
    }
-   public double confidenceHigh()          // high endpoint of 95% confidence interval
+   public double confidenceHi()          // high endpoint of 95% confidence interval
    {
-       return mean() + 1.96*stddev()/this.experiments;
+       return mean() + 1.96*stddev()/Math.sqrt(this.experiments);
    }
+   
+   public static void main(String[] args) {
+        PercolationStats stats = new PercolationStats(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+        System.out.println("mean = " + stats.mean());
+        System.out.println("stddev = " + stats.stddev());
+        System.out.println("Confidence(Low) = " + stats.confidenceLo());
+        System.out.println("Confindence(High) = " + stats.confidenceHi());
+    }
 }

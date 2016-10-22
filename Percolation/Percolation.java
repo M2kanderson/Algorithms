@@ -26,7 +26,9 @@ public class Percolation {
    
    public Percolation(int N) // create N-by-N grid, with all sites blocked
    {
-       
+       if(N <= 0){
+           throw new java.lang.IllegalArgumentException();
+       }
        this.grid = new int[N][N];
        this.size = N;
        this.quf = new WeightedQuickUnionUF(N * N + 2);
@@ -39,7 +41,7 @@ public class Percolation {
        }
        
    }
-   public int numberOfOpenSites()
+   private int numberOfOpenSites()
    {
        return this.numberOpenSites;
    }
@@ -51,6 +53,8 @@ public class Percolation {
    // open site (row i, column j) if it is not open already
    public void open(int i, int j) 
    {
+       i = i - 1;
+       j = j - 1;
        if (i > this.size || i < 0 || j > this.size || j < 0)
            throw new java.lang.IndexOutOfBoundsException("i: " + i +", " + "j: " + j);
        int currentPos = oneDSpace(i, j);
@@ -60,7 +64,7 @@ public class Percolation {
                //connect it with the top virtual site
                this.quf.union(currentPos, oneDSpace(this.size, 0)); 
            }
-           else if (i == this.size - 1) //if i is in the bottom row
+           if (i == this.size - 1) //if i is in the bottom row
            {
                //connect it with the bottom virtual site
                this.quf.union(currentPos, oneDSpace(this.size, 1)); 
@@ -83,12 +87,16 @@ public class Percolation {
    }
    public boolean isOpen(int i, int j)     // is site (row i, column j) open?
    {
+       i = i - 1;
+       j = j - 1;
        if (i > this.size || i < 0 || j > this.size || j < 0)
            throw new java.lang.IndexOutOfBoundsException("i: " + i +", " + "j: " + j);
        return grid[i][j] == 1;
    }
    public boolean isFull(int i, int j)     // is site (row i, column j) full?
    {
+       i = i - 1;
+       j = j - 1;
        if (i >= this.size || i < 0 || j >= this.size || j < 0)
            throw new java.lang.IndexOutOfBoundsException("i: " + i +", " + "j: " + j);
        return this.quf.connected(oneDSpace(i, j), oneDSpace(this.size, 0)) && grid[i][j] == 1;
