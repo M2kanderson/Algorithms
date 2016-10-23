@@ -33,9 +33,11 @@ public class PointPlotter {
             points[i] = p;
             p.draw();
         }
-        
-        Brute brute = new Brute(points);
-        brute.connectPoints();
+//        
+//        Brute brute = new Brute(points);
+//        brute.connectPoints();
+        Fast fast = new Fast(points);
+        fast.connectPoints();
 
         // display to screen all at once
         StdDraw.show(0);

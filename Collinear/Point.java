@@ -15,7 +15,8 @@ import edu.princeton.cs.algs4.StdDraw;
 public class Point implements Comparable<Point> {
 
     // compare points by slope
-    public final Comparator<Point> SLOPE_ORDER = new SlopeOrder();       // YOUR DEFINITION HERE
+    public final Comparator<Point> SLOPE_ORDER = new SlopeOrder();       // Slope order for points
+    public final Comparator<Point> POLAR_ORDER = new PolarOrder();
 
     private final int x;                              // x coordinate
     private final int y;                              // y coordinate
@@ -38,7 +39,11 @@ public class Point implements Comparable<Point> {
 
     // slope between this point and that point
     public double slopeTo(Point that) {
-        if(this.y == that.y)
+        if(this.y == that.y && this.x == that.x)
+        {
+            return Double.NEGATIVE_INFINITY;
+        }
+        else if(this.y == that.y)
         {
             return 0.0;
         }
@@ -68,6 +73,23 @@ public class Point implements Comparable<Point> {
         }
       }
     }
+    
+    private final class PolarOrder implements Comparator<Point>
+    {
+        public int compare(Point a, Point b)
+        {
+            if(slopeTo(a) < slopeTo(b))
+            {
+                return -1;
+            }
+            else if(slopeTo(a) > slopeTo(b))
+            {
+                return +1;
+            }
+            return 0;
+        }
+    }
+    
 
     // is this point lexicographically smaller than that one?
     // comparing y-coordinates and breaking ties by x-coordinates
