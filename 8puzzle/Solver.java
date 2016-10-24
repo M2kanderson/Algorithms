@@ -1,5 +1,9 @@
 public class Solver {
+   private Board initialBoard;
    public Solver(Board initial)   // find a solution to the initial board
+   {
+       this.initialBoard = initial;
+   }
    public boolean isSolvable()    // is the initial board solvable?
    public int moves()             // return min number of moves to solve the initial board;
                                   // -1 if no such solution
