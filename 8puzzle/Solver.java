@@ -5,37 +5,31 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
 
 public class Solver {
-   private int moves;
    private int statesEnqueued;
-   private Queue<Board> boards;
-   private Board initialBoard;
-   private boolean solvable;
+   private Stack<Board> boards;
+
    public Solver(Board initial)   // find a solution to the initial board
    {
-       this.initialBoard = initial;
+       this.boards = new Stack<Board>();
+       this.boards.push(initial);
        if(isSolvable())
        {
            solve();
        }
-       else
-       {
-           this.solvable = false;
-       }
+
        
    }
    private void solve()
    {
-       this.solvable = true;
-       this.boards = new Queue<Board>();
-       Board board = this.initialBoard;
+
+       
+       Board board = this.boards.peek();
        Board prevBoard = null;
-       this.boards.enqueue(board);
-       this.moves = 0;
+       
        this.statesEnqueued = 1;
-       MinPQ priorityQueue = new MinPQ(4, board.BY_HAMMING);
-       while(board.hamming() > 0)
+       MinPQ priorityQueue = new MinPQ(4, board.BY_MANHATTAN);
+       while(board.manhattan() > 0)
        {
-           this.moves += 1;
            Stack<Board> neighbors = (Stack<Board>) board.neighbors();
            while(neighbors.size() > 0)
            {
@@ -50,29 +44,36 @@ public class Solver {
            }
            prevBoard = board;
            board = (Board) priorityQueue.delMin();
-           this.boards.enqueue(board);
+           if(board.moves() == this.moves())
+           {
+               this.boards.pop();
+           }
+           this.boards.push(board);
        }
    }
    public boolean isSolvable()    // is the initial board solvable?
    {
-       return this.initialBoard.isSolvable();
+       return this.boards.peek().isSolvable();
    }
-   public Queue<Board> solution()
+   public Stack<Board> solution()
    {
        return this.boards;
    }
    public int moves()             // return min number of moves to solve the initial board;
    {                              // -1 if no such solution
-       return this.moves;
-       
+       if(this.boards.peek() != null)
+       {
+           return this.boards.peek().moves();
+       }
+       return -1;   
    }
    public String toString()       // return string representation of solution (as described above)
    {
        String boardString = "";
        if(isSolvable()){
-          while(this.boards.size() > 0)
+          for (Board board : solution()) 
           {
-              boardString += this.boards.dequeue().toString();
+              boardString += board.toString();
           }
           boardString += "Number of states enqueued = " + this.statesEnqueued + "\n";
           boardString += "Number of moves = " + this.moves();

@@ -85,24 +85,33 @@ public class Board {
        return new Board(newTiles);
 
    }
+   private int[] zeroLocation()
+   {
+       int N = this.tiles.length;
+       int[] zero = new int[2];
+       zero[0] = 0;
+       zero[1] = 0;
+       for(int i = 0; i < N; i++)
+       {
+           for(int j = 0; j < N; j++)
+           {
+               if(this.tiles[i][j] == 0)
+               {
+                   zero[0] = i;
+                   zero[1] = j;
+                   return zero;
+               }
+           }
+       }
+       return zero;
+   }
    public Iterable<Board> neighbors() // return an Iterable of all neighboring board positions
    {
      Stack<Board> stack = new Stack<Board>();
      int N = this.tiles.length;
-     int zeroX = 0;
-     int zeroY = 0;
-     for(int i = 0; i < N; i++)
-     {
-       for(int j = 0; j < N; j++)
-       {
-         if(this.tiles[i][j] == 0)
-         {
-           zeroX = i;
-           zeroY = j;
-           break;
-         }
-       }
-     }
+     int[] zero = zeroLocation();
+     int zeroX = zero[0];
+     int zeroY = zero[1];
 
      if(zeroX > 0){
        Board newBoard = dupBoard();
@@ -164,30 +173,10 @@ public class Board {
      }
      return finalString + "\n";
    }
-   
-   public Board altBoard()
+
+   public int moves()
    {
-       int N = this.tiles.length;
-       int[][] newTiles = new int[N][N];
-       for(int i = 0; i < N; i++)
-       {
-           for(int j = 0; j < N; j++)
-               newTiles[i][j] = this.tiles[i][j];
-       }
-       if(newTiles[0][0] != 0 && newTiles[0][1] != 0)
-       {
-           int temp = newTiles[0][0];
-           newTiles[0][0] = newTiles[0][1];
-           newTiles[0][1] = temp;
-       }
-       else
-       {
-           int temp = newTiles[1][0];
-           newTiles[1][0] = newTiles[1][1];
-           newTiles[1][1] = temp;
-       }
-       
-       return new Board(newTiles);
+       return this.moves;
    }
 
    private static class ByHamming implements Comparator<Board>
@@ -231,9 +220,13 @@ public class Board {
        }
      }
    }
-   
+
    public boolean isSolvable()
    {
+       if(manhattan() == 0)
+       {
+           return true;
+       }
        int N = this.tiles.length;
        int count = 0;
        for(int idx = 0; idx < N * N; idx++)
@@ -241,18 +234,42 @@ public class Board {
            int row = idx / N;
            int col = idx % N;
            int currentTile = this.tiles[row][col];
+           if(currentTile == 0)
+           {
+               continue;
+           }
            for(int afterIdx = idx + 1; afterIdx < N * N; afterIdx++)
            {
                int afterRow = afterIdx / N;
                int afterCol = afterIdx % N;
                int compareTile = this.tiles[afterRow][afterCol];
-               if(compareTile < currentTile)
+               if(compareTile != 0 && compareTile < currentTile)
                {
                    count += 1;
                }
            }
        }
-       return count % 2 == 0;
+       if(N % 2 == 1)
+       {
+
+           return count % 2 == 0;
+       }
+       else
+       {
+           int[] zero = zeroLocation();
+           int row = zero[0];
+           
+           int col = zero[1];
+           if((N - row) % 2 == 0)
+           {
+             return count % 2 == 1;
+           }
+           else
+           {
+             return count % 2 == 0;
+           }
+       }
+
    }
 
    //  test client
