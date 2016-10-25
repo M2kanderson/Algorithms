@@ -3,15 +3,54 @@ import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
+import java.util.Comparator;
 
 public class Solver {
+    
+   private class BoardNode{
+       public final Comparator<BoardNode> BY_HAMMING = new ByHamming();
+       public final Comparator<BoardNode> BY_MANHATTAN = new ByManhattan();
+       private Board board;
+       private int moves;
+       private BoardNode prev;
+       public BoardNode(Board board, BoardNode prev){
+           this.board = board;
+           this.prev = prev;
+           if(prev==null) 
+               this.moves = 0;
+           else 
+               this.moves = prev.moves + 1;
+       }
+       
+       private class ByManhattan implements Comparator<BoardNode>
+       {
+           public int compare(BoardNode a, BoardNode b)
+           {
+               int manA = a.board.manhattan() + a.moves;
+               int manB = b.board.manhattan() + b.moves;
+               return (manA - manB);
+           }
+       }
+       
+       private class ByHamming implements Comparator<BoardNode>
+       {
+           public int compare(BoardNode a, BoardNode b)
+           {
+               int hamA = a.board.hamming() + a.moves;
+               int hamB = b.board.hamming() + b.moves;
+               return (hamA - hamB);
+
+           }
+       }
+       
+   };
    private int statesEnqueued;
    private Stack<Board> boards;
+   private BoardNode finalBoardNode;
 
    public Solver(Board initial)   // find a solution to the initial board
    {
-       this.boards = new Stack<Board>();
-       this.boards.push(initial);
+       this.finalBoardNode = new BoardNode(initial, null);
        if(isSolvable())
        {
            solve();
@@ -21,49 +60,52 @@ public class Solver {
    }
    private void solve()
    {
-
-       
-       Board board = this.boards.peek();
-       Board prevBoard = null;
-       
        this.statesEnqueued = 1;
-       MinPQ priorityQueue = new MinPQ(4, board.BY_MANHATTAN);
-       while(board.manhattan() > 0)
+       BoardNode currentNode = this.finalBoardNode;
+       MinPQ priorityQueue = new MinPQ(currentNode.BY_MANHATTAN);
+       while(currentNode.board.manhattan() > 0)
        {
-           Stack<Board> neighbors = (Stack<Board>) board.neighbors();
+           Stack<Board> neighbors = (Stack<Board>) currentNode.board.neighbors();
            while(neighbors.size() > 0)
            {
                Board neighbor = neighbors.pop();
                
-               if(!neighbor.equals(prevBoard))
+               if(currentNode.prev == null || !neighbor.equals(currentNode.prev.board))
                {
                    this.statesEnqueued += 1;
-                   priorityQueue.insert(neighbor);
+                   priorityQueue.insert(new BoardNode(neighbor, currentNode));
                }
                
            }
-           prevBoard = board;
-           board = (Board) priorityQueue.delMin();
-           if(board.moves() == this.moves())
-           {
-               this.boards.pop();
-           }
-           this.boards.push(board);
+           currentNode = (BoardNode) priorityQueue.delMin();
        }
+       this.finalBoardNode = currentNode;
    }
    public boolean isSolvable()    // is the initial board solvable?
    {
-       return this.boards.peek().isSolvable();
+       return this.finalBoardNode.board.isSolvable();
    }
    public Stack<Board> solution()
    {
-       return this.boards;
+       Stack<Board> boards = new Stack<Board>();
+       BoardNode currentBoardNode = this.finalBoardNode;
+       while(currentBoardNode != null)
+       {
+           boards.push(currentBoardNode.board);
+           currentBoardNode = currentBoardNode.prev;
+       }
+       Stack<Board> reverseBoards = new Stack<Board>();
+       while(boards.size() > 0)
+       {
+           reverseBoards.push(boards.pop());
+       }
+       return reverseBoards;
    }
    public int moves()             // return min number of moves to solve the initial board;
    {                              // -1 if no such solution
-       if(this.boards.peek() != null)
+       if(this.finalBoardNode != null)
        {
-           return this.boards.peek().moves();
+           return this.finalBoardNode.moves;
        }
        return -1;   
    }

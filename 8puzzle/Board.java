@@ -5,14 +5,10 @@ import edu.princeton.cs.algs4.MinPQ;
 
 public class Board {
    private int[][] tiles;
-   private int moves;
-   public static final Comparator<Board> BY_HAMMING = new ByHamming();
-   public static final Comparator<Board> BY_MANHATTAN = new ByManhattan();
 
    public Board(int[][] tiles)        // construct a board from an N-by-N array of tiles
    {
      this.tiles = tiles;
-     this.moves = 0;
    }
    public int tileAt(int row, int col)
    {
@@ -52,6 +48,7 @@ public class Board {
      }
      return sum;
    }
+   
    public boolean equals(Object y)    // does this board equal y
    {
      if(y == this)
@@ -74,7 +71,24 @@ public class Board {
      }
      return true;
    }
-   private Board dupBoard(){
+   
+   public boolean isGoal()
+   {
+     int N = this.tiles.length;
+     for(int i = 0; i < N; i++)
+     {
+       for(int j = 0; j < N; j++)
+       {
+         if(this.tiles[i][j] != 0 && this.tiles[i][j] != (j+1) +i*N)
+         {
+           return false;
+         }
+       }
+     }
+     return true;
+   }
+   
+   public Board dupBoard(){
        int N = this.tiles.length;
        int[][] newTiles = new int[N][N];
        for(int i = 0; i < N; i++)
@@ -118,7 +132,6 @@ public class Board {
        int temp = newBoard.tiles[zeroX - 1][zeroY];
        newBoard.tiles[zeroX - 1][zeroY] = 0;
        newBoard.tiles[zeroX][zeroY] = temp;
-       newBoard.moves = this.moves + 1;
        stack.push(newBoard);
      }
      if(zeroX < this.tiles.length - 1)
@@ -127,7 +140,6 @@ public class Board {
        int temp = newBoard.tiles[zeroX + 1][zeroY];
        newBoard.tiles[zeroX + 1][zeroY] = 0;
        newBoard.tiles[zeroX][zeroY] = temp;
-       newBoard.moves = this.moves + 1;
        stack.push(newBoard);
      }
      if(zeroY > 0){
@@ -135,7 +147,6 @@ public class Board {
        int temp = newBoard.tiles[zeroX][zeroY - 1];
        newBoard.tiles[zeroX][zeroY - 1] = 0;
        newBoard.tiles[zeroX][zeroY] = temp;
-       newBoard.moves = this.moves + 1;
        stack.push(newBoard);
      }
      if(zeroY < this.tiles.length - 1)
@@ -144,7 +155,6 @@ public class Board {
        int temp = newBoard.tiles[zeroX][zeroY + 1];
        newBoard.tiles[zeroX][zeroY + 1] = 0;
        newBoard.tiles[zeroX][zeroY] = temp;
-       newBoard.moves = this.moves + 1;
        stack.push(newBoard);
      }
      return stack;
@@ -172,53 +182,6 @@ public class Board {
        finalString += line + "\n";
      }
      return finalString + "\n";
-   }
-
-   public int moves()
-   {
-       return this.moves;
-   }
-
-   private static class ByHamming implements Comparator<Board>
-   {
-     public int compare(Board a, Board b)
-     {
-       int hamA = a.hamming() + a.moves;
-       int hamB = b.hamming() + b.moves;
-       if(hamA < hamB)
-       {
-         return -1;
-       }
-       else if(hamA > hamB)
-       {
-         return 1;
-       }
-       else
-       {
-         return 0;
-       }
-     }
-   }
-
-   private static class ByManhattan implements Comparator<Board>
-   {
-     public int compare(Board a, Board b)
-     {
-       int manA = a.manhattan();
-       int manB = b.manhattan();
-       if(manA < manB)
-       {
-         return -1;
-       }
-       else if(manA > manB)
-       {
-         return 1;
-       }
-       else
-       {
-         return 0;
-       }
-     }
    }
 
    public boolean isSolvable()
@@ -274,40 +237,6 @@ public class Board {
 
    //  test client
    public static void main(String[] args){
-     int N = 3;
-     MinPQ priorityQueue = new MinPQ(4, BY_HAMMING);
-     int[][] tiles = new int[N][N];
-     for (int i = 0; i < N; i++)
-        for (int j = 0; j < N; j++)
-            tiles[i][j] = j + i*N + 1;
-    tiles[0][0] = 8;
-    tiles[0][1] = 1;
-    tiles[0][2] = 3;
-    tiles[1][0] = 4;
-    tiles[1][1] = 0;
-    tiles[1][2] = 2;
-    tiles[2][0] = 7;
-    tiles[2][1] = 6;
-    tiles[2][2] = 5;
-    System.out.println(tiles[0][2]);
-    Board board = new Board(tiles);
-    Stack<Board> neighbors = (Stack<Board>) board.neighbors();
-    Board neighbor = neighbors.pop();
-    System.out.println(board.equals(neighbor));
-//    System.out.println(board.toString());
-//    System.out.println(board.hamming());
-//    System.out.println(board.manhattan());
-//    Stack<Board> neighbors = (Stack<Board>) board.neighbors();
-//    while(neighbors.size() > 0)
-//    {
-//        Board neighbor = neighbors.pop();
-//        priorityQueue.insert(neighbor);
-//    }
-//
-//    while(priorityQueue.size() > 0)
-//    {
-//        System.out.println(priorityQueue.delMin());
-//    }
 
 
   }
