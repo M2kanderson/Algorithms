@@ -1,8 +1,6 @@
 import java.util.Stack;
 import edu.princeton.cs.algs4.MinPQ;
-import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.Queue;
 import java.util.Comparator;
 
 public class Solver {
@@ -45,7 +43,6 @@ public class Solver {
        
    };
    private int statesEnqueued;
-   private Stack<Board> boards;
    private BoardNode finalBoardNode;
 
    public Solver(Board initial)   // find a solution to the initial board

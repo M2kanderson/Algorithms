@@ -1,6 +1,5 @@
 // import java.lang.Math.abs;
 import java.util.Stack;
-import java.util.Comparator;
 import edu.princeton.cs.algs4.MinPQ;
 
 public class Board {
