@@ -8,27 +8,35 @@ public class Solver {
    private int moves;
    private int statesEnqueued;
    private Queue<Board> boards;
+   private Board initialBoard;
    private boolean solvable;
    public Solver(Board initial)   // find a solution to the initial board
    {
+       this.initialBoard = initial;
+       if(isSolvable())
+       {
+           solve();
+       }
+       else
+       {
+           this.solvable = false;
+       }
+       
+   }
+   private void solve()
+   {
        this.solvable = true;
        this.boards = new Queue<Board>();
-       Queue<Board> altBoards = new Queue<Board>();
-       Board board = initial;
+       Board board = this.initialBoard;
        Board prevBoard = null;
-       Board altPrevBoard = null;
-       Board altboard = board.altBoard();
        this.boards.enqueue(board);
-       altBoards.enqueue(altboard);
        this.moves = 0;
        this.statesEnqueued = 1;
        MinPQ priorityQueue = new MinPQ(4, board.BY_HAMMING);
-       MinPQ altPriorityQueue = new MinPQ(4, board.BY_HAMMING);
        while(board.hamming() > 0)
        {
            this.moves += 1;
            Stack<Board> neighbors = (Stack<Board>) board.neighbors();
-           Stack<Board> altNeighbors = (Stack<Board>) altboard.neighbors();
            while(neighbors.size() > 0)
            {
                Board neighbor = neighbors.pop();
@@ -40,31 +48,14 @@ public class Solver {
                }
                
            }
-           while(altNeighbors.size() > 0)
-           {
-               Board neighbor = altNeighbors.pop();
-               
-               if(!neighbor.equals(altPrevBoard))
-               {
-                   altPriorityQueue.insert(neighbor);
-               }
-               
-           }
            prevBoard = board;
-           altPrevBoard = altboard;
            board = (Board) priorityQueue.delMin();
-           altboard = (Board) altPriorityQueue.delMin();
-           if(altboard.hamming() <= 0)
-           {
-               this.solvable = false;
-               break;
-           }
            this.boards.enqueue(board);
        }
    }
    public boolean isSolvable()    // is the initial board solvable?
    {
-       return this.solvable;
+       return this.initialBoard.isSolvable();
    }
    public Queue<Board> solution()
    {

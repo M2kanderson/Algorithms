@@ -174,9 +174,19 @@ public class Board {
            for(int j = 0; j < N; j++)
                newTiles[i][j] = this.tiles[i][j];
        }
-       int temp = newTiles[0][0];
-       newTiles[0][0] = newTiles[N - 1][N - 1];
-       newTiles[1][1] = temp;
+       if(newTiles[0][0] != 0 && newTiles[0][1] != 0)
+       {
+           int temp = newTiles[0][0];
+           newTiles[0][0] = newTiles[0][1];
+           newTiles[0][1] = temp;
+       }
+       else
+       {
+           int temp = newTiles[1][0];
+           newTiles[1][0] = newTiles[1][1];
+           newTiles[1][1] = temp;
+       }
+       
        return new Board(newTiles);
    }
 
@@ -220,6 +230,29 @@ public class Board {
          return 0;
        }
      }
+   }
+   
+   public boolean isSolvable()
+   {
+       int N = this.tiles.length;
+       int count = 0;
+       for(int idx = 0; idx < N * N; idx++)
+       {
+           int row = idx / N;
+           int col = idx % N;
+           int currentTile = this.tiles[row][col];
+           for(int afterIdx = idx + 1; afterIdx < N * N; afterIdx++)
+           {
+               int afterRow = afterIdx / N;
+               int afterCol = afterIdx % N;
+               int compareTile = this.tiles[afterRow][afterCol];
+               if(compareTile < currentTile)
+               {
+                   count += 1;
+               }
+           }
+       }
+       return count % 2 == 0;
    }
 
    //  test client
