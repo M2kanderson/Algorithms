@@ -53,9 +53,11 @@ public class PointSET {
      double nearestDistance = Double.POSITIVE_INFINITY;
      for(Point2D point: this.points)
      {
-       if(p.distanceTo(point) < nearestDistance)
+       double dist = p.distanceTo(point);
+       if(dist < nearestDistance)
        {
          nearestPoint = point;
+         nearestDistance = dist;
        }
      }
      return nearestPoint;
